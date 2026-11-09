@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 Compute and save transform stats for dataset normalization.
-Reads full input volumes and evenly spaced flattened stress samples from supplied models.
+Reads 15-channel full input volumes and evenly spaced flattened stress samples from supplied models.
 The public entry point supplies training models only; the numerical routine is retained.
 """
 
@@ -28,10 +28,10 @@ def compute_transform_stats(model_paths, stress_percentile=50.0, max_samples_per
     idx_y = 1
     idx_z = 2
     idx_t = 3
-    idx_mat_params = list(range(5, 11))
-    idx_thickness = 11
-    idx_grad_x = 14
-    idx_grad_y = 15
+    idx_mat_params = list(range(4, 10))
+    idx_thickness = 10
+    idx_grad_x = 13
+    idx_grad_y = 14
 
     z_max = 0.0
     t_max = 0.0
@@ -55,8 +55,11 @@ def compute_transform_stats(model_paths, stress_percentile=50.0, max_samples_per
 
         input_zarr = zarr.open(input_path, mode='r')
         
-        if input_zarr.shape[0] < 16:
-            raise RuntimeError(f"Expected at least 16 channels, got {input_zarr.shape[0]} in {model_path}")
+        if len(input_zarr.shape) != 4 or input_zarr.shape[0] != 15:
+            raise ValueError(
+                f'Expected input shape (15, D, H, W), got {input_zarr.shape} in {model_path}. '
+                'Prepare exactly 15 channels in the order documented in README.md.'
+            )
 
         data = input_zarr[:].astype(np.float32)
         

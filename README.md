@@ -26,7 +26,7 @@ Each subset directory directly contains model folders:
 
 ```text
 data/train/model_train_a/
-  input_features.zarr/     # float32, shape (16, D, H, W)
+  input_features.zarr/     # float32, shape (15, D, H, W)
   vonmises.zarr/           # float32, shape (1, D, H, W)
 
 data/val/model_val_a/      # same file layout
@@ -40,20 +40,21 @@ Input channels use zero-based indices:
 | 0, 1 | x, y coordinates |
 | 2 | z coordinate |
 | 3 | Temperature |
-| 4 | Unused; omitted by preprocessing |
-| 5–10 | Six material parameters; detailed order/units to be documented |
-| 11 | Thickness |
-| 12 | Material-interface mask |
-| 13 | Interface feature `exp(-d)`, where `d` is the nearest interface distance |
-| 14, 15 | Temperature gradients in x and y |
+| 4–9 | Six material parameters; detailed order/units to be documented |
+| 10 | Thickness |
+| 11 | Material-interface mask |
+| 12 | Interface feature `exp(-d)`, where `d` is the nearest interface distance |
+| 13, 14 | Temperature gradients in x and y |
 
-The loader converts the 16 raw channels into 15 model inputs. Supply channel 13 already transformed as `exp(-d)`. Keep units and channel order consistent across subsets, and provide finite stress labels for training and evaluation. Geometry/simulation-to-Zarr conversion is performed separately.
+Data files and the model both use **exactly 15 channels** in this order; preprocessing does not discard any channel. Supply channel 12 already transformed as `exp(-d)`. Keep units and channel order consistent across subsets, and provide finite stress labels for training and evaluation. Geometry/simulation-to-Zarr conversion is performed separately.
+
+For data prepared with the previous 16-channel layout, remove the unused channel at zero-based index 4 from both full inputs (axis 0) and precomputed input patches (axis 1) before using this version. Stress labels and patch coordinates stay the same.
 
 For faster loading, prepare patches under each model folder:
 
 ```text
 patches_40x512x512_stride10x256x256/
-  input_patches.zarr/      # (N, 16, 40, 512, 512)
+  input_patches.zarr/      # (N, 15, 40, 512, 512)
   vonmises_patches.zarr/   # (N, 1, 40, 512, 512)
   patches_metadata.json
 ```

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 训练脚本
-16 通道原始输入经预处理得到 15 通道；预测 1 通道 asinh(von Mises 应力)。
+原始输入和预处理后的模型输入均为15通道；预测1通道asinh(von Mises应力)。
 """
 import warnings
 warnings.filterwarnings("ignore", category=FutureWarning)

@@ -1,4 +1,4 @@
-# Original network configuration values; explicit values override model class defaults.
+# Input data and the model both use 15 channels; see README.md for channel order.
 IN_CHANS: 15
 OUT_CHANS: 1
 DEPTHS: [2, 2, 2, 2]

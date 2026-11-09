@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 数据加载模块
-针对16维输入、1维von Mises应力输出数据集
+针对15通道输入、1通道von Mises应力输出数据集
 """
 
 import os
@@ -17,7 +17,7 @@ from .transforms import stress_scale
 class StressDataset(Dataset):
     """
     热应力数据集
-    原始输入：16 通道；normalize=True 时跳过原始索引 4，返回 15 通道。
+    原始输入与模型输入均为15通道；归一化保持通道顺序，不跳过任何通道。
     目标：1 通道 von Mises 应力，经非负裁剪和 asinh 变换。
     公共入口显式传入训练集统计文件，验证/测试不重新拟合统计量。
     """
@@ -317,6 +317,15 @@ class StressDataset(Dataset):
                 input_zarr = zarr.open(os.path.join(sample_path, 'input_features.zarr'), mode='r')
                 stress_zarr = zarr.open(os.path.join(sample_path, 'vonmises.zarr'), mode='r') if self.include_stress else None
 
+        expected_ndim = 5 if self.use_prepatched else 4
+        channel_axis = 1 if self.use_prepatched else 0
+        if len(input_zarr.shape) != expected_ndim or input_zarr.shape[channel_axis] != 15:
+            expected_shape = '(N, 15, D, H, W)' if self.use_prepatched else '(15, D, H, W)'
+            raise ValueError(
+                f'Expected input shape {expected_shape}, got {input_zarr.shape} in {sample_path}. '
+                'Prepare exactly 15 channels in the order documented in README.md.'
+            )
+
         if self.use_prepatched:
             input_data = input_zarr[patch_idx].astype(np.float32)
             if self.include_stress:
@@ -341,12 +350,12 @@ class StressDataset(Dataset):
             idx_y = 1
             idx_z = 2
             idx_t = 3
-            idx_mat_params = list(range(5, 11))
-            idx_thickness = 11
-            idx_interface_mask = 12
-            idx_interface_distance = 13
-            idx_grad_x = 14
-            idx_grad_y = 15
+            idx_mat_params = list(range(4, 10))
+            idx_thickness = 10
+            idx_interface_mask = 11
+            idx_interface_distance = 12
+            idx_grad_x = 13
+            idx_grad_y = 14
 
             x = input_data[idx_x]
             y = input_data[idx_y]
@@ -356,9 +365,9 @@ class StressDataset(Dataset):
             mat_params = input_data[idx_mat_params] / (self.mat_params_max[:, None, None, None] + 1e-8)
             thickness = input_data[idx_thickness] / (self.thickness_max + 1e-8)
             interface_mask = input_data[idx_interface_mask]
-            # Raw channel 13 already stores D_int = exp(-d), where d is the
+            # Input channel 12 already stores D_int = exp(-d), where d is the
             # nearest material-interface distance. Pass it through unchanged;
-            # do not apply exp(-d) a second time (model input channel 12).
+            # do not apply exp(-d) a second time.
             interface_distance = input_data[idx_interface_distance]
 
             grad_x = (input_data[idx_grad_x] - self.grad_mean[0]) / (self.grad_std[0] + 1e-8)

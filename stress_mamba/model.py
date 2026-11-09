@@ -131,7 +131,7 @@ class GSC(nn.Module):
         return x + x_residual
 
 class MambaEncoder(nn.Module):
-    def __init__(self, in_chans=1, depths=[2, 3, 3, 2], dims=[64, 128, 256, 512],
+    def __init__(self, in_chans=15, depths=[2, 3, 3, 2], dims=[64, 128, 256, 512],
                  drop_path_rate=0., layer_scale_init_value=1e-6, out_indices=[0, 1, 2, 3]):
         super().__init__()
 
@@ -247,7 +247,7 @@ class RegressionOutBlock(nn.Module):
 class SegMamba(nn.Module):
     def __init__(
         self,
-        in_chans=16,  # 保留类默认值；公共入口显式传入配置 IN_CHANS=15
+        in_chans=15,  # 与数据文件及公共入口配置 IN_CHANS=15 一致
         out_chans=1,  # 1维von Mises应力
         depths=[2, 2, 2, 2],
         feat_size=[64, 128, 256, 512],
