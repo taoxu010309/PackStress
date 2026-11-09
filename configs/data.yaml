@@ -1,0 +1,17 @@
+# Configure paths/settings for your own data; no dataset sizes are assumed.
+DATA_DIR: ./data/test
+TRAIN_DATA_DIR: ./data/train
+VAL_DATA_DIR: ./data/val
+# Evaluation also uses TRAIN_PATCH_DIR_NAME in the retained loader.
+TRAIN_PATCH_DIR_NAME: patches_40x512x512_stride10x256x256
+VAL_PATCH_DIR_NAME: patches_40x512x512_stride10x256x256
+PATCH_D: 40
+PATCH_H: 512
+PATCH_W: 512
+STRIDE_D: 10
+STRIDE_H: 256
+STRIDE_W: 256
+DEBUG_MAX_TRAIN_MODELS: 4
+# Published method uses P70. For reuse, change this percentile and refit training statistics.
+# Keep the same selection for training and evaluation; new checkpoints verify it.
+ASINH_PERCENTILE: 70.0

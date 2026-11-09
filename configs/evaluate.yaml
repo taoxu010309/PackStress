@@ -1,0 +1,11 @@
+# CLI arguments override these defaults. Supply your own checkpoint; none is included.
+checkpoint: ./outputs/experiment/model/best_model.pth
+# null uses DATA_DIR in data.yaml
+data_dir: null
+gpu: "0"
+batch_size: 1
+num_workers: 2
+output_dir: ./outputs/evaluation
+plot_scatter: false
+sample_ratio: 0.2
+max_points: 50000

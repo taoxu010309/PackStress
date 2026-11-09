@@ -1,0 +1,30 @@
+# Configure paths/settings for your own data; no dataset sizes are assumed.
+LOG_BASE_DIR: ./outputs
+EXPERIMENT_NAME: experiment
+DEBUG_MODE: false
+LEARNING_RATE: 0.0001
+WEIGHT_DECAY: 5.0e-05
+GRAD_CLIP_NORM: 0.5
+VONMISES_LOSS_WEIGHT: 1.0
+GRAD_WEIGHT: 50.0
+LABEL_WEIGHT_ALPHA: 2.0
+LABEL_WEIGHT_GAMMA: 2.0
+LABEL_WEIGHT_CLIP_C: 10.0
+# Published label weighting uses P70; other percentiles require refitting training statistics.
+LABEL_WEIGHT_PERCENTILE: 70
+USE_AMP: true
+SAVE_BEST_MODEL: true
+# Supported choices: val_loss or mae; use val_loss for this release.
+BEST_METRIC: val_loss
+VAL_SCATTER_NUM_POINTS: 50000
+VAL_SCATTER_SEED: 20260312
+VAL_SCATTER_DIRNAME: val_scatter
+VAL_SCATTER_DPI: 100
+VAL_METRICS_FILENAME: val_metrics.csv
+ASYNC_PLOT: false
+PLOT_QUEUE_MAXSIZE: 2
+NUM_WORKERS: 2
+SAVE_CHECKPOINT_EVERY: 5
+BATCH_SIZE: 2
+MAX_EPOCHS: 200
+VAL_EVERY: 5

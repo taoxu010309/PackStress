@@ -1,0 +1,6 @@
+# Original network configuration values; explicit values override model class defaults.
+IN_CHANS: 15
+OUT_CHANS: 1
+DEPTHS: [2, 2, 2, 2]
+FEAT_SIZE: [32, 64, 128, 256]
+HIDDEN_SIZE: 768
